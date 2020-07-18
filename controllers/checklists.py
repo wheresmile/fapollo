@@ -30,6 +30,7 @@ def get_home_checklists():
             review_users_id_map = {x.id: x for x in review_users}
             for checklist in checklists:
                 single_checklist_info = dict(
+                    id=checklist.id,
                     description=checklist.description,
                     checked_count=checklist.checked_count,
                 )
@@ -42,7 +43,7 @@ def get_home_checklists():
                     )
                     if review_user:
                         last_review["author_nickname"] = review_user.nickname
-                single_checklist_info["last_review"] = last_review
+                    single_checklist_info["last_review"] = last_review
 
                 checklists_res.append(single_checklist_info)
 

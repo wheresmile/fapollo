@@ -19,6 +19,7 @@ def get_tabs_of_home():
         res = []
         for tab in tabs:
             res.append(dict(
+                id=tab.id,
                 display_name=tab.display_name,
                 slug=tab.slug,
             ))

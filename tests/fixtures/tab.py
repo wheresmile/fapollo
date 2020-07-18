@@ -6,4 +6,5 @@ home_tab = Tab(
     display_name="首页",
     slug="/",
     location=Tab.LOCATION_HOME,
+    priority=0,
 )
