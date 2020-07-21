@@ -7,6 +7,7 @@ from models.base import BaseMixin
 
 class KvConfig(Base, BaseMixin):
     KEY_HOME_CHECKLIST_SCENE_ID = "home_checklist_scene_id"  # 首页展示的清单场景id
+    KEY_MOTTO_ID = "motto_id"  # 返回的格言的 id
 
     __tablename__ = "kv_configs"
     __table_args__ = (

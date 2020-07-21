@@ -6,7 +6,7 @@ from sqlalchemy import (
     create_engine,
     Column,
     DateTime,
-    Integer,
+    Integer, func, text,
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -22,8 +22,12 @@ Base = declarative_base()
 class BaseMixin:
     id = Column(Integer, primary_key=True, autoincrement=True, comment="主键")
 
-    created_at = Column(DateTime, nullable=False, default=datetime.datetime.now, comment="创建时间")
-    updated_at = Column(DateTime, nullable=False, default=datetime.datetime.now, onupdate=datetime.datetime.now,
+    created_at = Column(DateTime, nullable=False, default=datetime.datetime.now,
+                        server_default=func.now(),
+                        comment="创建时间")
+    updated_at = Column(DateTime, nullable=False, default=datetime.datetime.now,
+                        onupdate=datetime.datetime.now,
+                        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
                         comment="更新时间")
     deleted_at = Column(DateTime, nullable=True, index=True, comment="删除时间（软删除）")
 

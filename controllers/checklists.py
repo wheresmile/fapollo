@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint, request
+from flask import Blueprint
 
 from controllers.utils import succeed
 from models import get_session, User
@@ -33,6 +33,7 @@ def get_home_checklists():
                     id=checklist.id,
                     description=checklist.description,
                     checked_count=checklist.checked_count,
+                    checked=(checklist.id % 2 == 0),
                 )
                 review = reviews_id_map.get(checklist.last_review_id)
                 # 设置最后一个评论以及对应评论的作者信息
