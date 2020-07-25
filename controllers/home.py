@@ -1,16 +1,32 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint
+from flask import (
+    Blueprint,
+)
 
 from controllers.utils import succeed
-from models import get_session, User
-from models.checklist import Checklist
-from models.checklist_review import ChecklistReview
-from models.kv_config import KvConfig
+from models import (
+    get_session,
+    Tab, KvConfig, Checklist, ChecklistReview, User,
+)
 
-checklist_bp = Blueprint("checklist", __name__, url_prefix="/api/v1/checklist")
+home_bp = Blueprint("home", __name__, url_prefix="/api/v1/home")
 
 
-@checklist_bp.route("home", methods=["GET"])
+@home_bp.route("tabs", methods=["GET"])
+def get_tabs_of_home():
+    with get_session() as s:
+        tabs = Tab.get_by_location(s, Tab.LOCATION_HOME)
+        res = []
+        for tab in tabs:
+            res.append(dict(
+                id=tab.id,
+                display_name=tab.display_name,
+                slug=tab.slug,
+            ))
+        return succeed(data=res)
+
+
+@home_bp.route("checklists", methods=["GET"])
 def get_home_checklists():
     """
     获取首页的清单列表
@@ -49,4 +65,3 @@ def get_home_checklists():
                 checklists_res.append(single_checklist_info)
 
         return succeed(data=checklists_res)
-

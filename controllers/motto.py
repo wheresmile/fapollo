@@ -3,9 +3,7 @@
 from flask import Blueprint
 
 from controllers.utils import succeed
-from models import get_session, User
-from models.checklist import Checklist
-from models.checklist_review import ChecklistReview
+from models import get_session
 from models.kv_config import KvConfig
 from models.motto import Motto
 
