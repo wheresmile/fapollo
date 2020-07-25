@@ -17,13 +17,9 @@ def create_app(test_config=None):
     def fetch_user():
         token = session.get("token")
         if token:
-            from models import get_session
-            with get_session() as s:
-                from models import User
-                user = User.get_by_token(s, token=token)
-            g.user = user
+            g.token = token
         else:
-            g.user = None
+            g.token = None
 
     # global variables
     for k, v in config.FLASK_CONFIG.items():

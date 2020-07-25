@@ -49,12 +49,13 @@ def login(json_dict):
 
 @auth_bp.route("logout", methods=["POST"])
 @login_required
-def logout(user):
-    session.clear()
+def logout(token):
     # 更新 token，即让所有的终端下线
+    session.clear()
     with get_session() as s:
+        user = User.get_by_token(s, token)
         user.reset_token(s)
-    return succeed(msg="注销成功")
+        return succeed(msg="注销成功")
 
 
 @auth_bp.route("register", methods=["POST"])
