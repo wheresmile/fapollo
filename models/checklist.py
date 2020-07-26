@@ -31,6 +31,7 @@ class Checklist(Base, BaseMixin):
     description = Column(String(256), nullable=False, comment="检查项描述")
     checked_count = Column(Integer, nullable=False, default=0, comment="被确认的个数，考虑到并发，这里只是参考值")
     last_review_id = Column(Integer, comment="最后一个评论的id，考虑到并发，这里只是一个参考值")
+    position_order = Column(Integer, default=0, comment="排序的序列号")
 
     @classmethod
     def add(cls, session, user_id, scene_id, description):

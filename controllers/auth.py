@@ -11,22 +11,10 @@ from controllers.utils import (
 )
 from models import (
     get_session,
-    User,
+    User, UserInvitation,
 )
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/api/v1/auth")
-
-
-class AuthSchema(Schema):
-    """
-    用来校验 auth 传入的字段
-    """
-    nickname = fields.Str()
-    email = fields.Email(required=True)
-    password = fields.Str(validate=validate.Length(min=8))
-
-
-auth_schema = AuthSchema()
 
 
 @auth_bp.route("login", methods=["POST"])
@@ -58,16 +46,34 @@ def logout(token):
         return succeed(msg="注销成功")
 
 
+class SignUpSchema(Schema):
+    """
+    用来校验 auth 传入的字段
+    """
+    nickname = fields.Str(required=True)
+    email = fields.Email(required=True)
+    password = fields.Str(validate=validate.Length(min=8))
+    invitation_code = fields.Str(required=True)
+
+
+signup_schema = SignUpSchema()
+
+
 @auth_bp.route("register", methods=["POST"])
 @json_required
 def register(json_dict):
-    json_dict = auth_schema.load(json_dict)
+    json_dict = signup_schema.load(json_dict)
     email = json_dict["email"]
     nickname = json_dict["nickname"]
     password = json_dict["password"]
-    if len(password) < 8:
-        return failed(msg="密码至少8位")
+    invitation_code = json_dict["invitation_code"]
 
     with get_session() as s:
+        invitation = UserInvitation.get_by_code(s, invitation_code)
+        if invitation is None or invitation.is_used:
+            return failed(msg="邀请码无效")
         user = User.register(s, nickname, email, password)
-        return succeed(msg="注册成功", data={"token": user.token})
+        # 邀请码置位
+        invitation.used_by_user(user.id)
+
+        return succeed(msg="注册成功")

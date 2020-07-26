@@ -1,14 +1,27 @@
 # -*- coding: utf-8 -*-
 import json
 
+from tests.fixtures.user_invitation import user_invitation_1, user_invitation_used
+
 
 def test_register(client):
     response = client.post(
         '/api/v1/auth/register',
-        json={"nickname": "zhjw43", "email": "chalvern@163.com", "password": "12345678"}
+        json={"nickname": "zhjw43", "email": "chalvern@163.com",
+              "password": "12345678", "invitation_code": user_invitation_1.code}
     )
     assert response.status_code == 200
     assert json.loads(response.get_data(as_text=True))["msg"] == "注册成功"
+
+
+def test_register_with_invitation_used(client):
+    response = client.post(
+        '/api/v1/auth/register',
+        json={"nickname": "zhjw43", "email": "chalvern@163.com",
+              "password": "12345678", "invitation_code": user_invitation_used.code}
+    )
+    assert response.status_code == 200
+    assert json.loads(response.get_data(as_text=True))["msg"] == "邀请码无效"
 
 
 def test_register_invalid_email(client):

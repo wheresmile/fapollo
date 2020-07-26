@@ -13,8 +13,11 @@ from models.user import User
 
 __all__ = [
     "Base", "engine", "get_session",
-    "User", "Tab",
+    "User", "UserInvitation",
+    "Tab",
     "KvConfig",
     "Checklist", "ChecklistScene", "ChecklistReview", "ChecklistReviewStar",
     "Motto"
 ]
+
+from models.user_invitaton import UserInvitation

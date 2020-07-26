@@ -37,8 +37,6 @@ class User(Base, BaseMixin):
             token=str(uuid.uuid4()).replace("-", ""),
         )
         session.add(user)
-        session.commit()
-
         return user
 
     @classmethod
