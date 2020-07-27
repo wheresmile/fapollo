@@ -24,4 +24,4 @@ def test_get_all_user_invitations(client, auth):
     assert res_json["code"] == 200
     response_data = res_json["data"]
     assert type(response_data) is list
-    assert len(response_data) == 1
+    assert len(response_data) == 2

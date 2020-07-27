@@ -34,26 +34,31 @@ class Checklist(Base, BaseMixin):
     position_order = Column(Integer, default=0, comment="排序的序列号")
 
     @classmethod
-    def add(cls, session, user_id, scene_id, description):
+    def add(cls, session, user_id, scene_id, description, position_order=1):
         checklist = Checklist(
             user_id=user_id,
             scene_id=scene_id,
             description=description,
+            position_order=position_order,
         )
         session.add(checklist)
 
     @classmethod
-    def update(cls, session, checklist_id, description):
+    def update(cls, session, checklist_id, description, position_order):
         checklist = cls.get_by_id(session, checklist_id)
         if checklist:
             checklist.description = description
+            checklist.position_order = position_order
+
+    def update_order(self, position_order):
+        self.position_order = position_order
 
     @classmethod
     def get_list_by_scene(cls, session, scene_id):
         checklists = session.query(Checklist).filter(
             Checklist.scene_id == scene_id,
             Checklist.deleted_at.is_(None),
-        ).all()
+        ).order_by(Checklist.position_order.asc()).all()
         return checklists
 
 
