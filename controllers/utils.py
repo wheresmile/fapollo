@@ -45,3 +45,18 @@ def login_required(func):
             return failed(msg="未登录")
         return func(token, *args, **kwargs)
     return wrapper
+
+
+def admin_required(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        token = g.token
+        if token is None:
+            return failed(msg="未登录")
+        with get_session() as s:
+            user = User.get_by_token(s, token)
+            if not user.admin:
+                return failed(msg="需要管理员身份")
+            return func(user, *args, **kwargs)
+
+    return wrapper

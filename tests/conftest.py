@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import logging
 import os
 
 import sys
@@ -14,8 +15,15 @@ import pytest
 from apollo import create_app
 
 
+def logging_config():
+    stdout_handler = logging.StreamHandler(sys.stderr)
+    log = logging.getLogger()
+    log.addHandler(stdout_handler)
+
+
 @pytest.fixture
 def app():
+    logging_config()
     Base.metadata.create_all(engine)
     with get_session() as session:
         save_fixtures(session)

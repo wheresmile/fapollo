@@ -64,6 +64,10 @@ class User(Base, BaseMixin):
             cls.deleted_at.is_(None),
         ).first()
 
+    @classmethod
+    def get_list(cls, session, offset, limit):
+        return session.query(cls).offset(offset).limit(limit).all()
+
     def reset_token(self, session):
         self.token = str(uuid.uuid4()).replace("-", "")
         session.add(self)
