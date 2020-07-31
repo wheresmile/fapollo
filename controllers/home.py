@@ -3,7 +3,7 @@ from flask import (
     Blueprint,
 )
 
-from controllers.utils import succeed, login_optioned
+from controllers.utils import succeed, login_optioned, login_required
 from models import (
     get_session,
     Tab, KvConfig, Checklist, ChecklistReview, User,
@@ -27,7 +27,7 @@ def get_tabs_of_home():
 
 
 @home_bp.route("checklists", methods=["GET"])
-@login_optioned
+@login_required(required=False)
 def get_home_checklists(token):
     """
     获取首页的清单列表

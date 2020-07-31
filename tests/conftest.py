@@ -25,11 +25,13 @@ def logging_config():
 def app():
     logging_config()
     Base.metadata.create_all(engine)
-    with get_session() as session:
-        save_fixtures(session)
-    app = create_app()
-    yield app
-    Base.metadata.drop_all(engine)
+    try:
+        with get_session() as session:
+            save_fixtures(session)
+        app = create_app()
+        yield app
+    finally:
+        Base.metadata.drop_all(engine)
 
 
 @pytest.fixture

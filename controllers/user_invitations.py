@@ -10,7 +10,7 @@ user_invitation_bp = Blueprint("user_invitation", __name__, url_prefix="/api/v1/
 
 
 @user_invitation_bp.route("add", methods=["POST"])
-@login_required
+@login_required()
 def add(token):
     with get_session() as s:
         user = User.get_by_token(s, token)
@@ -26,7 +26,7 @@ def add(token):
 
 
 @user_invitation_bp.route("all", methods=["GET"])
-@login_required
+@login_required()
 def get_all_of(token):
     with get_session() as s:
         user = User.get_by_token(s, token)

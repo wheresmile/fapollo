@@ -8,7 +8,7 @@ user_bp = Blueprint("user", __name__, url_prefix="/api/v1/user/info")
 
 
 @user_bp.route("", methods=["GET"])
-@login_required
+@login_required()
 def user_info(token):
     with get_session() as s:
         user = User.get_by_token(s, token)

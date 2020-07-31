@@ -13,7 +13,7 @@ checklists_bp = Blueprint("checklists", __name__, url_prefix="/api/v1/checklists
 
 
 @checklists_bp.route("review", methods=["POST"])
-@login_required
+@login_required()
 @json_required
 def add_review(json_dict, token):
     with get_session() as s:

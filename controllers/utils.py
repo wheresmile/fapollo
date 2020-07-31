@@ -37,14 +37,16 @@ def json_required(func):
     return wrapper
 
 
-def login_required(func):
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        token = g.token
-        if token is None:
-            return failed(msg="未登录")
-        return func(token, *args, **kwargs)
-    return wrapper
+def login_required(required=True):
+    def _login_required(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            token = g.token
+            if token is None and required:
+                return failed(msg="未登录")
+            return func(token, *args, **kwargs)
+        return wrapper
+    return _login_required
 
 
 def login_optioned(func):

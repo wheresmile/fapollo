@@ -36,7 +36,7 @@ def login(json_dict):
 
 
 @auth_bp.route("logout", methods=["POST"])
-@login_required
+@login_required()
 def logout(token):
     # 更新 token，即让所有的终端下线
     session.clear()
