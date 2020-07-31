@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import functools
+import logging
 
 from flask import (
     jsonify,
@@ -49,18 +50,6 @@ def login_required(required=True):
     return _login_required
 
 
-def login_optioned(func):
-    """
-    登陆是可选的情况
-    """
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        token = g.token
-        return func(token, *args, **kwargs)
-
-    return wrapper
-
-
 def admin_required(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
@@ -71,6 +60,7 @@ def admin_required(func):
             user = User.get_by_token(s, token)
             if not user.admin:
                 return failed(msg="需要管理员身份")
+            logging.info(f"用户user_id={user.id} 调用了模块 {func.__module__} 中的 {func.__name__} 方法。")
             return func(user, *args, **kwargs)
 
     return wrapper

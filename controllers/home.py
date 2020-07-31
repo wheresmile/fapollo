@@ -3,7 +3,7 @@ from flask import (
     Blueprint,
 )
 
-from controllers.utils import succeed, login_optioned, login_required
+from controllers.utils import succeed, login_required
 from models import (
     get_session,
     Tab, KvConfig, Checklist, ChecklistReview, User,

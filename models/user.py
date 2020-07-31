@@ -78,3 +78,14 @@ class User(Base, BaseMixin):
 
     def check_password(self, password):
         return bcrypt.checkpw(password.encode("utf8"), self.password.encode("utf8"))
+
+    def get_base_info(self):
+        """
+        获取用户基本信息，可在一些实体的 "作者" 部分进行展示
+        :return:
+        """
+        return dict(
+            id=self.id,
+            nickname=self.nickname,
+        )
+

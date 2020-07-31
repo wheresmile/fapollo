@@ -116,7 +116,9 @@ class ChecklistReview(Base, BaseMixin):
         :param limit:
         :return:
         """
-        pass
+        return session.query(cls).filter(
+            cls.id < last_review_id,
+        ).order_by(cls.id.desc()).limit(limit).all()
 
     @classmethod
     def add_star_count(cls, session, review_id, star_delta):
