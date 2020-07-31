@@ -50,6 +50,12 @@ class AuthActions(object):
     def logout(self):
         return self._client.post('/api/v1/auth/logout')
 
+    def get(self, url):
+        return self._client.get(url)
+
+    def post(self, url, json_data):
+        return self._client.post(url, json=json_data)
+
 
 @pytest.fixture
 def auth(client):

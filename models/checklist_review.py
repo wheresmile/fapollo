@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
-from sqlalchemy import Column, Integer, String, UniqueConstraint, Boolean
+from datetime import datetime
+
+from sqlalchemy import Column, Integer, String, UniqueConstraint, Boolean, Index
 
 from models import Base
 from models.base import BaseMixin
+from utils import time_utils
 
 
 class ChecklistReview(Base, BaseMixin):
@@ -12,13 +15,29 @@ class ChecklistReview(Base, BaseMixin):
 
     __tablename__ = "checklist_reviews"
     __table_args__ = (
+        Index("user_checklist_created", "user_id", "checklist_id", "created_at"),
         {'comment': u'给清单的评论'},
     )
 
     user_id = Column(Integer, index=True, nullable=False, comment="创建此条记录的用户id")
     checklist_id = Column(Integer, index=True, nullable=False, comment="对应的清单id")
     detail = Column(String(512), comment="详情，为空时表示简单打卡")
-    star_count = Column(Integer, comment="点赞数目")
+    star_count = Column(Integer, default=0, comment="点赞数目")
+
+    @classmethod
+    def _get_by_checklist_and_user_between(cls, session, user_id, checklist_id, start_time, end_time):
+        return session.query(cls).filter(
+            cls.user_id == user_id,
+            cls.checklist_id == checklist_id,
+            cls.created_at.between(start_time, end_time),
+        ).first()
+
+    @classmethod
+    def _get_list_by_user_between(cls, session, user_id, start_time, end_time):
+        return session.query(cls).filter(
+            cls.user_id == user_id,
+            cls.created_at.between(start_time, end_time)
+        ).all()
 
     @classmethod
     def add(cls, session, user_id, checklist_id, detail):
@@ -28,6 +47,34 @@ class ChecklistReview(Base, BaseMixin):
             detail=detail,
         )
         session.add(review)
+        return review
+
+    @classmethod
+    def add_or_update(cls, session, user_id, checklist_id, detail):
+        """
+        添加前首先检查是否已经存在
+        :param session:
+        :param user_id:
+        :param checklist_id:
+        :param detail:
+        :return:
+        """
+        beginning_of_today, ending_of_today = time_utils.beginning_and_end_of_today()
+        review = cls._get_by_checklist_and_user_between(
+            session, user_id, checklist_id, beginning_of_today, ending_of_today)
+        if review:
+            print(review.id)
+            review.detail = detail
+            return review
+
+        # 如果不存在，创建新的
+        return cls.add(session, user_id, checklist_id, detail)
+
+    @classmethod
+    def get_today_list_of_user(cls, session, user_id):
+        beginning_of_today, ending_of_today = time_utils.beginning_and_end_of_today()
+        reviews = cls._get_list_by_user_between(session, user_id, beginning_of_today, ending_of_today)
+        return reviews
 
     @classmethod
     def add_star_count(cls, session, review_id, star_delta):

@@ -4,10 +4,10 @@ from flask import Blueprint
 from controllers.utils import succeed, login_required
 from models import get_session, User
 
-user_bp = Blueprint("user", __name__, url_prefix="/api/v1/user")
+user_bp = Blueprint("user", __name__, url_prefix="/api/v1/user/info")
 
 
-@user_bp.route("info", methods=["GET"])
+@user_bp.route("", methods=["GET"])
 @login_required
 def user_info(token):
     with get_session() as s:

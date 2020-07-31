@@ -47,6 +47,18 @@ def login_required(func):
     return wrapper
 
 
+def login_optioned(func):
+    """
+    登陆是可选的情况
+    """
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        token = g.token
+        return func(token, *args, **kwargs)
+
+    return wrapper
+
+
 def admin_required(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
