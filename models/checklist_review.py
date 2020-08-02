@@ -124,13 +124,14 @@ class ChecklistReview(Base, BaseMixin):
     def add_star_count(cls, session, review_id, star_delta):
         review = cls.get_by_id(session, review_id)
         if review is not None:
-            review.start_count += star_delta
+            review.star_count += star_delta
+        return review
 
     @classmethod
     def set_star_count(cls, session, review_id, star_count):
         review = cls.get_by_id(session, review_id)
         if review is not None:
-            review.start_count = star_count
+            review.star_count = star_count
 
 
 class ChecklistReviewStar(Base, BaseMixin):
@@ -148,18 +149,18 @@ class ChecklistReviewStar(Base, BaseMixin):
     on = Column(Boolean, default=False, comment="是否点赞（考虑取消点赞的情况）")
 
     @classmethod
-    def toggle_star(cls, session, user_id, review_id):
+    def add_star(cls, session, user_id, review_id):
         star = cls.get_review_star(session, user_id, review_id)
         if star:
-            star.on = not star.on
-        else:
-            star = ChecklistReviewStar(
-                user_id=user_id,
-                review_id=review_id,
-                on=True,
-            )
-            session.add(star)
-        return star
+            return False
+
+        star = ChecklistReviewStar(
+            user_id=user_id,
+            review_id=review_id,
+            on=True,
+        )
+        session.add(star)
+        return True
 
     @classmethod
     def get_review_star(cls, session, user_id, review_id):
@@ -168,5 +169,11 @@ class ChecklistReviewStar(Base, BaseMixin):
             cls.review_id == review_id,
         ).first()
 
+    @classmethod
+    def get_reviews_star_of_user(cls, session, user_id, review_ids):
+        return session.query(cls).filter(
+            cls.user_id == user_id,
+            cls.review_id.in_(review_ids),
+        ).all()
 
 

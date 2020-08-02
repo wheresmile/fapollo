@@ -44,7 +44,7 @@ def login_required(required=True):
         def wrapper(*args, **kwargs):
             token = g.token
             if token is None and required:
-                return failed(msg="未登录")
+                return failed(code=401, msg="未登录")
             return func(token, *args, **kwargs)
         return wrapper
     return _login_required
