@@ -8,4 +8,4 @@ loglevel = 'info'
 capture_output = True
 errorlog = "-"
 
-bind = "0.0.0.0:20202"
+bind = "0.0.0.0:5000"

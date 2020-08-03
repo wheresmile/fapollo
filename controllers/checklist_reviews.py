@@ -94,4 +94,5 @@ def star(json_dict, token):
         return succeed(data=dict(
             review_id=review_id,
             star_count=review.star_count,
+            has_stared=1,
         ))

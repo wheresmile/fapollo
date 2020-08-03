@@ -4,6 +4,7 @@
 run_local: migrate
 	export DEBUG=True \
 	&& export FLASK_ENV=development \
+	&& export SQLALCHEMY_DB_URI=mysql+pymysql://root:123456@localhost/fapollo?charset=utf8mb4 \
 	&& python main.py
 
 
@@ -19,3 +20,10 @@ pytest:
 .PHONY: migrate
 migrate:
 	alembic upgrade head
+
+
+# 使用 gunicorn 运行（仅参考）
+.PHONY: run_gunicorn
+run_gunicorn:
+	export SQLALCHEMY_DB_URI=mysql+pymysql://root:123456@localhost/fapollo?charset=utf8mb4 \
+	&& gunicorn -c apollo/gunicorn_config.py main:app
