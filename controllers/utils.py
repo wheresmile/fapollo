@@ -14,7 +14,7 @@ def response(code, msg, data):
     r = {
         "code": code,  # 业务code
         "msg": msg,  # 提示消息
-        "data": data or {},
+        "data": {} if data is None else data,
     }
     return jsonify(r)
 

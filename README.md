@@ -22,6 +22,10 @@
    
     # 执行单元测试需要的数据库
     CREATE DATABASE `fapollo_test` DEFAULT CHARACTER SET = `utf8mb4`;
+   
+    # 创建用户
+    CREATE USER `root`@`%` IDENTIFIED BY '123456';
+    GRANT Create, Drop, Delete, Index, Insert, Lock Tables, Select, Update ON *.* TO `admin`@`%`;
     ```
 1. 安装依赖 `pip install -r requirements/requirements.txt` (建议使用 [virtualenv](https://virtualenv.pypa.io/en/latest/) 环境)
 1. 迁移数据结构到数据库

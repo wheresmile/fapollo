@@ -88,7 +88,6 @@ class ChecklistReview(Base, BaseMixin):
         review = cls._get_by_checklist_and_user_between(
             session, user_id, checklist_id, beginning_of_today, ending_of_today)
         if review:
-            print(review.id)
             review.detail = detail
             return review
 

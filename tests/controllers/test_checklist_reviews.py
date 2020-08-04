@@ -2,7 +2,7 @@
 import json
 from pprint import pprint
 
-from tests.fixtures.checklist_review import checklist_review_1
+from tests.fixtures.checklist_review import checklist_review_2
 
 
 def test_checklist_reviews_all(auth):
@@ -52,16 +52,16 @@ def test_checklist_reviews_star(auth):
     response = auth.login()
     assert response.status_code == 200
     response = auth.post("/api/v1/checklist_reviews/star", json_data=dict(
-        review_id=checklist_review_1.id,
+        review_id=checklist_review_2.id,
     ))
     assert response.status_code == 200
     res_json = json.loads(response.get_data(as_text=True))
-    assert res_json["data"]["review_id"] == checklist_review_1.id
+    assert res_json["data"]["review_id"] == checklist_review_2.id
     assert res_json["data"]["star_count"] == 1
 
     # 重复提交
     response = auth.post("/api/v1/checklist_reviews/star", json_data=dict(
-        review_id=checklist_review_1.id,
+        review_id=checklist_review_2.id,
     ))
     assert response.status_code == 200
     res_json = json.loads(response.get_data(as_text=True))

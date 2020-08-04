@@ -20,6 +20,7 @@ def add_review(json_dict, token):
         user = User.get_by_token(s, token)
         checklist = Checklist.get_by_id(s, json_dict["checklist_id"])
         review = ChecklistReview.add_or_update(s, user.id, checklist.id, json_dict.get("mood", "打卡"))
+        checklist.last_review_id = review.id
         s.commit()
         return succeed(data=dict(
             review_id=review.id,
