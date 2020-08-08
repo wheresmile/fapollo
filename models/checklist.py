@@ -50,9 +50,6 @@ class Checklist(Base, BaseMixin):
             checklist.description = description
             checklist.position_order = position_order
 
-    def update_order(self, position_order):
-        self.position_order = position_order
-
     @classmethod
     def get_list_by_scene(cls, session, scene_id):
         checklists = session.query(Checklist).filter(
@@ -61,4 +58,13 @@ class Checklist(Base, BaseMixin):
         ).order_by(Checklist.position_order.asc()).all()
         return checklists
 
+    @classmethod
+    def reset_all_checked_count(cls, session, scene_id):
+        session.query(Checklist).filter(
+            cls.scene_id == scene_id,
+        ).update({Checklist.checked_count: 0, Checklist.last_review_id: 0},
+                 synchronize_session=False)
+
+    def update_order(self, position_order):
+        self.position_order = position_order
 

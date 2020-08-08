@@ -5,6 +5,7 @@ from flask import Flask, session, g
 
 from apollo.config import config
 from apollo.load_bp import load_bp
+from scheduler import scheduler_start
 
 
 def create_app(test_config=None):
@@ -27,6 +28,8 @@ def create_app(test_config=None):
 
     # 加载 blue_print
     load_bp(app)
+    # 定时任务
+    scheduler_start()
 
     @app.route("/ping")
     def ping():

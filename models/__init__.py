@@ -10,6 +10,7 @@ from models.kv_config import KvConfig
 from models.motto import Motto
 from models.tab import Tab
 from models.user import User
+from models.user_invitaton import UserInvitation
 
 __all__ = [
     "Base", "engine", "get_session",
@@ -19,5 +20,3 @@ __all__ = [
     "Checklist", "ChecklistScene", "ChecklistReview", "ChecklistReviewStar",
     "Motto"
 ]
-
-from models.user_invitaton import UserInvitation
