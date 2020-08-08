@@ -19,10 +19,17 @@ def add_review(json_dict, token):
     with get_session() as s:
         user = User.get_by_token(s, token)
         checklist = Checklist.get_by_id(s, json_dict["checklist_id"])
-        review = ChecklistReview.add_or_update(s, user.id, checklist.id, json_dict.get("mood", "打卡"))
-        checklist.last_review_id = review.id
+        is_new, review = ChecklistReview.add_or_update(s, user.id, checklist.id, json_dict.get("mood", "打卡"))
         s.commit()
+        if is_new:  # 下面的更新存在并发问题
+            checklist.checked_count += 1
+            checklist.last_review_id = review.id
         return succeed(data=dict(
+            checklist=dict(
+                id=checklist.id,
+                checked_count=checklist.checked_count,
+            ),
+            is_new=(1 if is_new else 0),
             review_id=review.id,
             mood=review.detail,
         ))

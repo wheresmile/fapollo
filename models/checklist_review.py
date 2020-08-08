@@ -82,17 +82,17 @@ class ChecklistReview(Base, BaseMixin):
         :param user_id:
         :param checklist_id: 检查项id
         :param detail: 详情
-        :return:
+        :return: 是否新创建；创建的 review
         """
         beginning_of_today, ending_of_today = time_utils.beginning_and_end_of_today()
         review = cls._get_by_checklist_and_user_between(
             session, user_id, checklist_id, beginning_of_today, ending_of_today)
         if review:
             review.detail = detail
-            return review
+            return False, review
 
         # 如果不存在，创建新的
-        return cls.add(session, user_id, checklist_id, detail)
+        return True, cls.add(session, user_id, checklist_id, detail)
 
     @classmethod
     def get_today_list_of_user(cls, session, user_id):
