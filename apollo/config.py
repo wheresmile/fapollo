@@ -12,7 +12,7 @@ class Config:
         # 配置，一般是全局变量
         self.FLASK_CONFIG = {
             "SECRET_KEY": os.getenv("FLASK_SECRET_KEY", "dev"),
-            "SITE_NAME": os.getenv("SITE_NAME", "见周边—清单"),
+            "SITE_NAME": os.getenv("SITE_NAME", "清单"),
         }
 
 

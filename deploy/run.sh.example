@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# 本脚本用于实际部署时使用
+cd /home/ubuntu/code/fapollo
+source ./venv/bin/activate
+
+pip install -r ./requirements/requirements.txt
+
+export SQLALCHEMY_DB_URI=mysql+pymysql://root:123456@localhost/fapollo?charset=utf8mb4
+alembic upgrade head
+
+export SECRET_KEY=replace_your_secret
+# 通过使用 exec 命令把当前执行脚本的进程替换为 gunicorn
+exec gunicorn -c apollo/gunicorn_config.py main:app
+
+echo "不可能执行到这里！"

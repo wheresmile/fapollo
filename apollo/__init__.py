@@ -31,7 +31,7 @@ def create_app(test_config=None):
     # 定时任务
     scheduler_start()
 
-    @app.route("/ping")
+    @app.route("/api/ping")
     def ping():
         return "pong"
 
