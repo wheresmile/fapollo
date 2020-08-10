@@ -15,5 +15,10 @@ class Config:
             "SITE_NAME": os.getenv("SITE_NAME", "清单"),
         }
 
+        # 定时任务的配置
+        self.SCHEDULER_CONFIG = {
+            "START": os.getenv("SCHEDULER_START") == "True"
+        }
+
 
 config = Config()

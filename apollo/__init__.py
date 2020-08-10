@@ -29,7 +29,8 @@ def create_app(test_config=None):
     # 加载 blue_print
     load_bp(app)
     # 定时任务
-    scheduler_start()
+    if config.SCHEDULER_CONFIG["START"]:
+        scheduler_start()
 
     @app.route("/api/ping")
     def ping():

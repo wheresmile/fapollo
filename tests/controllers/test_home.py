@@ -21,7 +21,7 @@ def test_get_home_checklists(client):
     assert type(data) is list
     assert len(data) == 3
     # pprint(data)
-    assert data[0]["checked_count"] == 0
+    assert data[0]["checked_count"] == 1
     assert data[0]["last_review"]["author_nickname"] == "chalvern"
     for check_item in data:
         assert check_item["checked"] == 0

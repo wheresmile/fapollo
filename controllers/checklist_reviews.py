@@ -21,9 +21,10 @@ def fetch_all(token):
     :return:
     """
     last_id = request.args.get("last_review_id", REVIEW_ID_LIMITATION)
-    fetch_size = 20
+    fetch_size = 10
     with get_session() as s:
         reviews = ChecklistReview.get_reviews_ref_last_review_id(s, last_id, fetch_size)
+        has_more_reviews = fetch_size == len(reviews)
         # 发布阅评的用户信息
         user_ids = [x.user_id for x in reviews]
         users = User.get_by_id_list(s, user_ids)
@@ -77,6 +78,7 @@ def fetch_all(token):
         return succeed(data=dict(
             reviews=reviews_json,
             last_review_id=last_review_id,
+            has_more_reviews=(1 if has_more_reviews else 0),
         ))
 
 

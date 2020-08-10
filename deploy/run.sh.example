@@ -10,6 +10,7 @@ export SQLALCHEMY_DB_URI=mysql+pymysql://root:123456@localhost/fapollo?charset=u
 alembic upgrade head
 
 export SECRET_KEY=replace_your_secret
+export SCHEDULER_START=True
 # 通过使用 exec 命令把当前执行脚本的进程替换为 gunicorn
 exec gunicorn -c apollo/gunicorn_config.py main:app
 

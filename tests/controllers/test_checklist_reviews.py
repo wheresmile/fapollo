@@ -12,6 +12,7 @@ def test_checklist_reviews_all(auth):
     res_json = json.loads(response.get_data(as_text=True))
     # pprint(res_json)
     assert res_json["data"]["last_review_id"] == 1
+    assert res_json["data"]["has_more_reviews"] == 0
     reviews = res_json["data"]["reviews"]
     assert len(reviews) == 2
     for review in reviews:
