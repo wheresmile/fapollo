@@ -27,6 +27,6 @@ def get_all(admin):
                 id=user.id,
                 nickname=user.nickname,
                 email=user.email,
-                is_admin=user.admin,
+                is_admin=(1 if user.admin else 0),
             ))
         return succeed(data=data)
