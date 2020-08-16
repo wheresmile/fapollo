@@ -11,6 +11,11 @@
 * [pytest](https://docs.pytest.org/en/stable/index.html) 测试框架
 * [marshmallow](https://marshmallow.readthedocs.io/en/stable/) 数据转换（ex.序列化）框架
 
+## 文档
+
+* [本项目目录结构](./docs/README.md)
+* [api文档](./docs/api)
+
 
 ## 本地运行
 
@@ -35,6 +40,8 @@
 1. 修改 Makefile 中的 `SQLALCHEMY_DB_URI` 变量，然后执行 `make pytest` 运行测试用例
 1. 修改 Makefile 中的 `SQLALCHEMY_DB_URI` 变量，然后执行 `make` 启动服务
 
+
 ## todo
    
+- [ ] 文档细化
 - [ ] 安装与部署方案
