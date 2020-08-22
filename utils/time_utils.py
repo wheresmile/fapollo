@@ -6,6 +6,10 @@ def now():
     return datetime.datetime.now()
 
 
+def add_days(dt, days):
+    return dt + datetime.timedelta(days=days)
+
+
 def beginning_of_day(dt):
     dt = dt.replace(hour=0, minute=0, second=0, microsecond=0)
     return dt

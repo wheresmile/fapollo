@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, String, UniqueConstraint, Boolean, Index
+from sqlalchemy import Column, Integer, String, UniqueConstraint, Boolean, Index, func
 
 from models import Base
 from models.base import BaseMixin
@@ -15,7 +15,7 @@ class ChecklistReview(Base, BaseMixin):
 
     __tablename__ = "checklist_reviews"
     __table_args__ = (
-        Index("user_checklist_created", "user_id", "checklist_id", "created_at"),
+        Index("user_created_checklist", "user_id", "created_at", "checklist_id"),
         {'comment': u'给清单的评论'},
     )
 
@@ -118,6 +118,28 @@ class ChecklistReview(Base, BaseMixin):
         return session.query(cls).filter(
             cls.id < last_review_id,
         ).order_by(cls.id.desc()).limit(limit).all()
+
+    @classmethod
+    def get_reviews_count_of_n_days_before(cls, session, user_id, checklist_ids, days_before=30):
+        """
+        获取 checklist_ids 过去 days_before 天的打卡情况
+        :param session:
+        :param user_id:
+        :param checklist_ids:
+        :param days_before: 多少天前
+        :return:
+        """
+        end_time = time_utils.now()
+        start_time = time_utils.add_days(end_time, -days_before)
+        res_raw = session.query(ChecklistReview.checklist_id, func.count().label("punch_count")).filter(
+            cls.user_id == user_id,
+            cls.created_at.between(start_time, end_time),
+            cls.checklist_id.in_(checklist_ids)
+        ).group_by(ChecklistReview.checklist_id).all()
+        checklist_count_map = dict()
+        for res in res_raw:
+            checklist_count_map[res.checklist_id] = res.punch_count
+        return checklist_count_map
 
     @classmethod
     def add_star_count(cls, session, review_id, star_delta):

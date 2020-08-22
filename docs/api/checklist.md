@@ -19,7 +19,7 @@
       "description": "学习",
       "checked_count": 1,  // 今日有多少人今日打卡
       "checked": 1|0,  // 如果用户登录，1表示已打卡；用户未登录时一直返回0
-      "last_review": {  // 最后一个打卡信息，可能为空
+      "last_review": {  // 用户自己今日打卡信息，可能为空
         "author_nickname": "jing维", 
         "description": "MySQL文档第一章"
       }

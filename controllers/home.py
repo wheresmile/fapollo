@@ -40,40 +40,32 @@ def get_home_checklists(token):
             return succeed(data=checklists_res)
 
         checklists = Checklist.get_list_by_scene(s, int(raw_scene_id))
-        # 检索每个检查项全平台最后一次提交
-        review_ids = [x.last_review_id for x in checklists]
-        reviews = ChecklistReview.get_by_id_list(s, review_ids)
-        reviews_id_map = {x.id: x for x in reviews}
-        # 评论的用户信息
-        review_user_ids = [x.user_id for x in reviews]
-        review_users = User.get_by_id_list(s, review_user_ids)
-        review_users_id_map = {x.id: x for x in review_users}
+        checklist_ids = [x.id for x in checklists]
 
         # 检索自己是否打卡的相关信息
         my_reviews_id_map = {}
+        checklist_count_map = {}
+        user = None
         if token:
             user = User.get_by_token(s, token)
             my_reviews = ChecklistReview.get_today_list_of_user(s, user.id)
             my_reviews_id_map = {x.checklist_id: x for x in my_reviews}
+            checklist_count_map = ChecklistReview.get_reviews_count_of_n_days_before(s, user.id, checklist_ids)
 
         for checklist in checklists:
             single_checklist_info = dict(
                 id=checklist.id,
                 description=checklist.description,
-                checked_count=checklist.checked_count,
+                checked_count=checklist_count_map.get(checklist.id, 0),
                 checked=0,
             )
             if my_reviews_id_map.get(checklist.id):
                 single_checklist_info["checked"] = 1
-            review = reviews_id_map.get(checklist.last_review_id)
-            # 设置最后一个评论以及对应评论的作者信息
-            if review:
-                review_user = review_users_id_map.get(review.user_id)
+                review = my_reviews_id_map.get(checklist.id)
                 last_review = dict(
                     description=review.detail,
                 )
-                if review_user:
-                    last_review["author_nickname"] = review_user.nickname
+                last_review["author_nickname"] = user.nickname
                 single_checklist_info["last_review"] = last_review
 
             checklists_res.append(single_checklist_info)
