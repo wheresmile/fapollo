@@ -61,6 +61,6 @@ def admin_required(func):
             if not user.admin:
                 return failed(code=403,  msg="需要管理员身份")
             logging.info(f"用户user_id={user.id} 调用了模块 {func.__module__} 中的 {func.__name__} 方法。")
-            return func(user, *args, **kwargs)
+            return func(s, user, *args, **kwargs)
 
     return wrapper

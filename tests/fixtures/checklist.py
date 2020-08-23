@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from models.checklist import Checklist, ChecklistScene
+from models.checklist import Checklist
 from tests.fixtures.checklist_scene import scene_home_checklist
 from tests.fixtures.user import user_admin
 

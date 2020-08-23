@@ -107,7 +107,7 @@ class ChecklistReview(Base, BaseMixin):
         return reviews
 
     @classmethod
-    def get_reviews_ref_last_review_id(cls, session, last_review_id, limit=20):
+    def get_reviews_ref_last_review_id(cls, session, last_review_id, limit=10):
         """
         根据最后一个 last_review_id （开区间）拉取接下来的 limit 个阅评
         :param session:

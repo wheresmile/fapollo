@@ -4,11 +4,10 @@
 
 #### 拉取所有的打卡记录
 
-* `GET /api/v1/checklist_reviews?page=1&size=10`
+* `GET /api/v1/checklist_reviews?last_review_id=1`
 * 参数，登录态可选
-    * page, 表示页码，默认为1
-    * size，表示每页返回的个数，默认为10
-* 响应
+    * last_review_id, 最后拉取的 review_id，默认为 2<<32（降序）
+* 响应（每次返回10个）
 ```js
 {
   "code": 200,

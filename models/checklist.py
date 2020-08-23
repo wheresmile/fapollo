@@ -5,16 +5,6 @@ from models import Base
 from models.base import BaseMixin
 
 
-class ChecklistScene(Base, BaseMixin):
-    __tablename__ = "checklist_scenes"
-
-    __table_args__ = (
-        {'comment': u'场景、场合、某个具体案例、过程'},
-    )
-    user_id = Column(Integer, index=True, nullable=False, comment="创建此场景的用户id")
-    description = Column(String(256), nullable=False, comment="场景描述")
-
-
 class Checklist(Base, BaseMixin):
     """
     检查列表；用户可以确认
