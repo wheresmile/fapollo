@@ -22,6 +22,11 @@ migrate:
 	alembic upgrade head
 
 
+.PHONY: fabric
+fabric:
+	fab -H ubuntu@122.51.176.214  -i ~/.ssh/id_rsa  deploy
+
+
 # 使用 gunicorn 运行（仅参考）
 .PHONY: run_gunicorn
 run_gunicorn:
