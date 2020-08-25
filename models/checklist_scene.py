@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Text
 
 from models import Base
 from models.base import BaseMixin
@@ -12,9 +12,11 @@ class ChecklistScene(Base, BaseMixin):
         {'comment': u'场景、场合、某个具体案例、过程'},
     )
     user_id = Column(Integer, index=True, nullable=False, comment="创建此场景的用户id")
-    description = Column(String(256), nullable=False, comment="场景描述")
+    title = Column(String(256), nullable=False, comment="场景主题")
+    description = Column(Text, nullable=False, comment="场景描述")
     category = Column(String(32), comment="主分类")
     item_count = Column(Integer, default=0, comment="包含的清单数目")
+    priority = Column(Integer, comment="优先级")
 
     @classmethod
     def add(cls, session, user_id, description):

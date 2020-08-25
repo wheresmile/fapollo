@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask import (
-    Blueprint, session,
+    Blueprint, session, g,
 )
 from marshmallow import Schema, fields, validate
 
@@ -19,7 +19,8 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/api/v1/auth")
 
 @auth_bp.route("login", methods=["POST"])
 @json_required
-def login(json_dict):
+def login():
+    json_dict = g.json_dict
     email = json_dict["email"]
     password = json_dict["password"]
 
@@ -37,13 +38,13 @@ def login(json_dict):
 
 @auth_bp.route("logout", methods=["POST"])
 @login_required()
-def logout(token):
+def logout():
     # 更新 token，即让所有的终端下线
     session.clear()
-    with get_session() as s:
-        user = User.get_by_token(s, token)
-        user.reset_token(s)
-        return succeed(msg="注销成功")
+    s = g.mysql_session
+    user = g.user
+    user.reset_token(s)
+    return succeed(msg="注销成功")
 
 
 class SignUpSchema(Schema):
@@ -61,7 +62,8 @@ signup_schema = SignUpSchema()
 
 @auth_bp.route("register", methods=["POST"])
 @json_required
-def register(json_dict):
+def register():
+    json_dict = g.json_dict
     json_dict = signup_schema.load(json_dict)
     email = json_dict["email"]
     nickname = json_dict["nickname"]

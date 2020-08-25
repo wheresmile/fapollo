@@ -1,16 +1,23 @@
 # -*- coding: utf-8 -*-
 
 from flask import (
-    Blueprint, request,
+    Blueprint, request, g,
 )
 
-from controllers.utils import succeed, login_required, json_required, admin_required
+from controllers.utils import succeed, login_required, json_required, failed
 from models import (
     get_session, ChecklistScene, Checklist, ChecklistReview, User,
 )
 
 checklist_scene_bp = Blueprint("checklist_scene", __name__, url_prefix="/api/v1/checklist_scene")
 SCENE_ID_LIMITATION = 2 << 32  # 最大的ID
+
+
+@checklist_scene_bp.route("single", methods=["GET"])
+def fetch_single():
+    last_id = request.args.get("scene_id")
+    if last_id is None:
+        failed(msg="必须传入 scene_id")
 
 
 @checklist_scene_bp.route("all", methods=["GET"])
@@ -43,12 +50,15 @@ def fetch_all():
 
 @checklist_scene_bp.route("add", methods=["POST"])
 @json_required
-@admin_required
-def add_scene(mysql_session, admin, json_dict):
+@login_required(admin_required=True)
+def add_scene():
     """
     增加场景，暂时限定只管理员有权限
     """
+    json_dict = g.json_dict
     description = json_dict["description"]
+    mysql_session = g.mysql_session
+    admin = g.user
     scene = ChecklistScene.add(mysql_session, admin.id, description)
     mysql_session.commit()
     return succeed(data=dict(
@@ -60,7 +70,7 @@ def add_scene(mysql_session, admin, json_dict):
 
 @checklist_scene_bp.route("checklists", methods=["GET"])
 @login_required(required=False)
-def get_checklists_of_scene(token):
+def get_checklists_of_scene():
     """
     获取某个场景的清单列表
     :return:
@@ -69,27 +79,25 @@ def get_checklists_of_scene(token):
     checklists_res = []
     if raw_scene_id is None:
         return succeed(code=400, msg="非法的场景ID")
+    s = g.mysql_session
+    checklists = Checklist.get_list_by_scene(s, int(raw_scene_id))
 
-    with get_session() as s:
-        checklists = Checklist.get_list_by_scene(s, int(raw_scene_id))
+    # 检索自己是否打卡的相关信息
+    my_reviews_id_map = {}
+    if g.user:
+        my_reviews = ChecklistReview.get_today_list_of_user(s, g.user.id)
+        my_reviews_id_map = {x.checklist_id: x for x in my_reviews}
 
-        # 检索自己是否打卡的相关信息
-        my_reviews_id_map = {}
-        if token:
-            user = User.get_by_token(s, token)
-            my_reviews = ChecklistReview.get_today_list_of_user(s, user.id)
-            my_reviews_id_map = {x.checklist_id: x for x in my_reviews}
+    for checklist in checklists:
+        single_checklist_info = dict(
+            id=checklist.id,
+            description=checklist.description,
+            checked_count=checklist.checked_count,
+            checked=0,
+        )
+        if my_reviews_id_map.get(checklist.id):
+            single_checklist_info["checked"] = 1
 
-        for checklist in checklists:
-            single_checklist_info = dict(
-                id=checklist.id,
-                description=checklist.description,
-                checked_count=checklist.checked_count,
-                checked=0,
-            )
-            if my_reviews_id_map.get(checklist.id):
-                single_checklist_info["checked"] = 1
+        checklists_res.append(single_checklist_info)
 
-            checklists_res.append(single_checklist_info)
-
-        return succeed(data=checklists_res)
+    return succeed(data=checklists_res)

@@ -8,6 +8,7 @@ def deploy(c):
     with c.cd("/home/ubuntu/code/fapollo"):
         c.run('git fetch')
         c.run('git merge origin/master')
+    c.sudo('supervisorctl reload fapollo')
 
 
 
